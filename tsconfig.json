@@ -19,6 +19,7 @@
       "@modelModelPortfolios/*": [
         "src/app/modules/model-portfolio/modules/model-model-portfolios/*"
       ],
+      "exceljs": ["node_modules/exceljs/dist/exceljs.min"],
       "@auth/*": ["src/app/modules/auth/*"],
       "@core/*": ["src/app/core/*"],
       "@shared/*": ["src/app/shared/*"],
