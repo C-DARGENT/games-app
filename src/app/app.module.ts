@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
 import { en_US, NgZorroAntdModule, NZ_I18N } from 'ng-zorro-antd';
 import { AppComponent } from './app.component';
+import { services } from './services';
 
 registerLocaleData(localFr);
 
@@ -15,6 +16,6 @@ registerLocaleData(localFr);
   bootstrap: [AppComponent],
   declarations: [AppComponent],
   imports: [BrowserModule, NgZorroAntdModule, FormsModule, HttpClientModule, BrowserAnimationsModule, TranslateModule],
-  providers: [{ provide: NZ_I18N, useValue: en_US }]
+  providers: [{ provide: NZ_I18N, useValue: en_US }, services]
 })
 export class AppModule {}
