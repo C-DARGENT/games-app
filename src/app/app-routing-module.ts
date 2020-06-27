@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { GamesListComponent } from './components/games-list/games-list.component';
+import { DataListComponent } from './components/data-list/data-list.component';
 
 const routes: Routes = [
-  { path: 'games-list', component: GamesListComponent },
+  { path: 'games-list', component: DataListComponent },
   { path: '', pathMatch: 'full', redirectTo: 'games-list' },
   { path: '**', pathMatch: 'full', redirectTo: 'games-list' }
 ];

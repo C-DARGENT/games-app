@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { DataFileModel, DataModel } from '@app/models/data-files.model';
 import { BehaviorSubject } from 'rxjs';
 import * as XLSX from 'xlsx';
 type AOA = any[][];
@@ -7,7 +8,7 @@ type AOA = any[][];
   providedIn: 'root'
 })
 export class FileReaderService {
-  public fileData$ = new BehaviorSubject<Array<Object>>(null);
+  public fileData$ = new BehaviorSubject<DataFileModel>(null);
 
   private _fileTypes = [
     '.csv',
@@ -31,6 +32,7 @@ export class FileReaderService {
   private _readFile(evt: any): void {
     const target: DataTransfer = <DataTransfer>evt.target;
     const dataFiles = [];
+    const sheetsName = [];
 
     const reader: FileReader = new FileReader();
     reader.onload = (e: any) => {
@@ -41,15 +43,29 @@ export class FileReaderService {
       for (const workSheetname of workBook.SheetNames) {
         console.log(workSheetname);
         const workSheet: XLSX.WorkSheet = workBook.Sheets[workSheetname];
-        dataFiles.push({ [workSheetname]: <AOA>XLSX.utils.sheet_to_json(workSheet, { header: 1 }) });
+        dataFiles.push(<AOA>XLSX.utils.sheet_to_json(workSheet, { header: 1 }));
+        sheetsName.push(workSheetname);
       }
 
       /* save data */
 
       console.log(dataFiles);
-      this.fileData$.next(dataFiles);
+      this.fileData$.next({
+        name: target.files[0].name,
+        data: this._createDataModel(dataFiles),
+        dataType: sheetsName
+      });
     };
     reader.readAsBinaryString(target.files[0]);
+  }
+
+  private _createDataModel(sheetsData: Array<[]>): DataModel[] {
+    const dataArray = [];
+    for (const sheet of sheetsData) {
+      dataArray.push({ title: sheet.shift(), content: sheet });
+    }
+    console.log(dataArray);
+    return dataArray;
   }
 
   private _validFileType(file): boolean {
