@@ -39,9 +39,7 @@ export class FileReaderService {
       /* read workbook */
       const bstr: string = e.target.result;
       const workBook: XLSX.WorkBook = XLSX.read(bstr, { type: 'binary' });
-      console.log(' workBook.SheetNames', workBook.SheetNames);
       for (const workSheetname of workBook.SheetNames) {
-        console.log(workSheetname);
         const workSheet: XLSX.WorkSheet = workBook.Sheets[workSheetname];
         dataFiles.push(<AOA>XLSX.utils.sheet_to_json(workSheet, { header: 1 }));
         sheetsName.push(workSheetname);
@@ -49,7 +47,6 @@ export class FileReaderService {
 
       /* save data */
 
-      console.log(dataFiles);
       this.fileData$.next({
         name: target.files[0].name,
         data: this._createDataModel(dataFiles),
@@ -64,7 +61,6 @@ export class FileReaderService {
     for (const sheet of sheetsData) {
       dataArray.push({ title: sheet.shift(), content: sheet });
     }
-    console.log(dataArray);
     return dataArray;
   }
 

@@ -22,32 +22,57 @@
 </div>
 
 <div *ngIf="filesData" class="card p-4 mt-5">
-  <ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li
-      *ngFor="let type of filesData.dataType; let index = index"
-      class="nav-item"
-      (click)="selectSheetData(index)"
-      role="presentation"
+  <section class="d-flex justify-content-end m-3">
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-toggle="button"
+      aria-pressed="false"
+      autocomplete="off"
+      (click)="updateDataFile()"
     >
-      <a id="{{ index }}" data-toggle="tab" class="nav-link" [class.active]="currentDataIndex === index" role="tab">{{
-        type
-      }}</a>
-    </li>
-  </ul>
-  <div class="tab-content" id="myTabContent" *ngIf="filesData.data; else noData">
-    <table class="table table-striped">
-      <thead class="thead-light">
-        <tr>
-          <th *ngFor="let title of filesData.data[currentDataIndex].title" scope="col">{{ title ? title : '#' }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let content of filesData.data[currentDataIndex].content">
-          <td *ngFor="let prop of content">{{ prop }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      Update data file
+    </button>
+  </section>
+  <section>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li
+        *ngFor="let type of filesData.dataType; let index = index"
+        class="nav-item"
+        (click)="selectSheetData(index)"
+        role="presentation"
+      >
+        <a id="{{ index }}" data-toggle="tab" class="nav-link" [class.active]="currentDataIndex === index" role="tab">{{
+          type
+        }}</a>
+      </li>
+    </ul>
+    <div class="tab-content" id="myTabContent" *ngIf="filesData.data; else noData">
+      <table class="table table-striped">
+        <thead class="thead-light">
+          <tr>
+            <th *ngFor="let title of filesData.data[currentDataIndex].title" scope="col">{{ title ? title : '#' }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let content of filesData.data[currentDataIndex].content">
+            <td *ngFor="let prop of content">{{ prop }}</td>
+          </tr>
+          <tr>
+            <td *ngFor="let prop of nbDataProp; let i = index; first as isFirst">
+              <div *ngIf="!isFirst; else firstData">
+                <input [(ngModel)]="ngModelArray[i - 1]" type="text" class="form-control" />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-primary btn-lg btn-block" (click)="pushNewFileData()">Add new data</button>
+    </div>
+  </section>
 </div>
 
 <ng-template #noData> Files select containt no data </ng-template>
+<ng-template #firstData>
+  <span class="numberCells">{{ filesData.data[currentDataIndex].content.length + 1 }}</span>
+</ng-template>

@@ -8,14 +8,19 @@ export class FileWritterService {
   constructor() {}
 
   //fs writter service
-  public export(data, fileName?: string): void {
-    const name = fileName ? fileName : 'games-list.xlsx';
-    /* generate worksheet */
-    const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(data);
-
-    /* generate workbook and add the worksheet */
+  public export(data: Array<[]>, sheetNames: string[], fileName?: string): void {
+    const name = fileName ? fileName : 'video-games-list.xlsx';
+    /** Generate workbook */
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    /** Push worksheet data */
+    for (let index = 0; index < data.length; index++) {
+      /* Generate worksheet */
+      const ws: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(data[index]);
+
+      /* Add the worksheet */
+      XLSX.utils.book_append_sheet(wb, ws, sheetNames[index]);
+    }
 
     /* save to file */
     XLSX.writeFile(wb, name);

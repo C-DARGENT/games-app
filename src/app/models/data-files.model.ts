@@ -5,6 +5,6 @@ export interface DataFileModel {
 }
 
 export interface DataModel {
-  title: Array<[]>;
-  content: Array<[]>;
+  title: Array<any[]>;
+  content: Array<any[]>;
 }
