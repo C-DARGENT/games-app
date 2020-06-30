@@ -25,3 +25,27 @@ th {
   }
   */
 }
+
+tbody {
+  tr {
+    &.editCell,
+    &.newData {
+      td {
+        vertical-align: middle;
+      }
+    }
+  }
+  td {
+    &.cta-icon {
+      text-align: center;
+      a {
+        cursor: pointer;
+        padding: 5px;
+        &.disabled {
+          pointer-events: none;
+          color: #0000002e;
+        }
+      }
+    }
+  }
+}

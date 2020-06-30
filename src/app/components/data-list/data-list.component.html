@@ -64,24 +64,53 @@
                 <a class="icon-caret-down-fill"></a>
               </span>
             --></th>
+            <th><!-- CTA THEAD--></th>
           </tr>
         </thead>
         <tbody>
           <!-- Current data file -->
-          <tr *ngFor="let content of filesData.data[currentDataIndex].content">
-            <td *ngFor="let prop of content">{{ prop }}</td>
+          <tr
+            *ngFor="let content of filesData.data[currentDataIndex].content; let index = index"
+            [class.editCell]="editViewIndex === index"
+          >
+            <!-- Data listing view -->
+            <ng-container *ngIf="editViewIndex !== index">
+              <td *ngFor="let prop of content">{{ prop }}</td>
+              <td class="cta-icon">
+                <a class="icon-pencil" (click)="editData(index)" [class.disabled]="isEdition"></a>
+                <a class="icon-trash"></a>
+              </td>
+            </ng-container>
+            <!-- Edition data view -->
+            <ng-container *ngIf="editViewIndex === index">
+              <td *ngFor="let prop of content; let i = index; first as isFirst" [class.pl-0]="!isFirst">
+                <!--First data uneditable-->
+                <div *ngIf="isFirst">{{ prop }}</div>
+                <div *ngIf="!isFirst">
+                  <input [(ngModel)]="ngUpdateArray[i - 1]" type="text" class="form-control" />
+                </div>
+              </td>
+              <!-- CTA CELL -->
+              <td class="cta-icon">
+                <a class="icon-check" (click)="confirmEdition(index)"></a>
+                <a class="icon-cross" (click)="cancelEdition()"></a>
+              </td>
+            </ng-container>
           </tr>
           <!-- Add new data occurence -->
-          <tr>
-            <td *ngFor="let prop of nbProperty; let i = index; first as isFirst">
+          <tr class="newData">
+            <td *ngFor="let prop of nbProperty; let i = index; first as isFirst" [class.pl-0]="!isFirst">
               <div *ngIf="!isFirst; else firstData">
                 <input [(ngModel)]="ngModelArray[i - 1]" type="text" class="form-control" />
               </div>
             </td>
+            <!-- CTA Container -->
+            <td>
+              <button type="button" class="btn btn-primary btn-block" (click)="pushNewFileData()">Add new data</button>
+            </td>
           </tr>
         </tbody>
       </table>
-      <button type="button" class="btn btn-primary btn-lg btn-block" (click)="pushNewFileData()">Add new data</button>
     </div>
   </section>
 </div>

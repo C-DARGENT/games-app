@@ -13,9 +13,12 @@ import { takeUntil } from 'rxjs/operators';
 export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('inputFileUpload') public inputFileUpload: ElementRef;
   public currentDataIndex: number = 0;
+  public editViewIndex: number;
   public filesData: DataFileModel;
+  public isEdition: boolean;
   public nbProperty: Array<number>;
   public ngModelArray: Array<string>;
+  public ngUpdateArray: Array<any>;
   private _changeEventListenerBind;
   private _copyData: Array<Object>;
   private _destroy$ = new Subject<boolean>();
@@ -33,6 +36,7 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
         ngModelArray size is length-1 because the first property is uneditable (equal to 'data-id')
       */
       this.ngModelArray = new Array(data.data[0].title.length - 1); // to associa
+      this.ngUpdateArray = new Array(data.data[0].title.length - 1); // to associa
     });
   }
 
@@ -41,6 +45,26 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
       this._fileReaderService.getFileData(evt);
     };
     this.inputFileUpload.nativeElement.addEventListener('change', this._changeEventListenerBind);
+  }
+
+  public editData(dataIndex: number): void {
+    this.editViewIndex = dataIndex;
+    this.isEdition = true;
+    this._setEditionData(dataIndex);
+  }
+
+  public confirmEdition(dataIndex: number): void {
+    this._setEditionData(dataIndex, true);
+    this.editViewIndex = null;
+    this.isEdition = false;
+  }
+
+  public cancelEdition(): void {
+    this.editViewIndex = null;
+    this.isEdition = false;
+
+    // Reinit edit array
+    this.ngUpdateArray = new Array(this.filesData.data[this.currentDataIndex].title.length - 1);
   }
 
   public selectSheetData(dataToRender: number): void {
@@ -105,6 +129,19 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     dataArray.unshift(this.filesData.data[this.currentDataIndex].content.length + 1);
     this.filesData.data[this.currentDataIndex].content.push(dataArray);
+  }
+
+  private _setEditionData(dataIndex: number, confirmEdition?: boolean): void {
+    let i = 0;
+    while (i < this.ngUpdateArray.length) {
+      if (confirmEdition) {
+        // save new prop values on data list variable
+        this.filesData.data[this.currentDataIndex].content[dataIndex][i + 1] = this.ngUpdateArray[i];
+      } else {
+        this.ngUpdateArray[i] = this.filesData.data[this.currentDataIndex].content[dataIndex][i + 1];
+      }
+      i++;
+    }
   }
 
   public ngOnDestroy(): void {
