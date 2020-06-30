@@ -48,9 +48,9 @@ export class FileReaderService {
       /* save data */
 
       this.fileData$.next({
-        name: target.files[0].name,
         data: this._createDataModel(dataFiles),
-        dataType: sheetsName
+        name: target.files[0].name,
+        type: sheetsName
       });
     };
     reader.readAsBinaryString(target.files[0]);

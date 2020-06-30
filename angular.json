@@ -22,6 +22,7 @@
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "src/styles.less",
+              "src/assets/fonts/style.less",
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": [

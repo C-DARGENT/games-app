@@ -37,7 +37,7 @@
   <section>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
       <li
-        *ngFor="let type of filesData.dataType; let index = index"
+        *ngFor="let type of filesData.type; let index = index"
         class="nav-item"
         (click)="selectSheetData(index)"
         role="presentation"
@@ -51,15 +51,29 @@
       <table class="table table-striped">
         <thead class="thead-light">
           <tr>
-            <th *ngFor="let title of filesData.data[currentDataIndex].title" scope="col">{{ title ? title : '#' }}</th>
+            <th
+              *ngFor="let title of filesData.data[currentDataIndex].title; first as isFirst; let index = index"
+              scope="col"
+              [class.middle]="isFirst"
+              (click)="sortData(index)"
+            >
+              <span class="header">{{ title ? title : '#' }}</span>
+              <!--  
+              <span *ngIf="!isFirst" class="d-inline-flex flex-column icon" (click)="sortData(index)">
+                <a class="icon-caret-up-fill"></a>
+                <a class="icon-caret-down-fill"></a>
+              </span>
+            --></th>
           </tr>
         </thead>
         <tbody>
+          <!-- Current data file -->
           <tr *ngFor="let content of filesData.data[currentDataIndex].content">
             <td *ngFor="let prop of content">{{ prop }}</td>
           </tr>
+          <!-- Add new data occurence -->
           <tr>
-            <td *ngFor="let prop of nbDataProp; let i = index; first as isFirst">
+            <td *ngFor="let prop of nbProperty; let i = index; first as isFirst">
               <div *ngIf="!isFirst; else firstData">
                 <input [(ngModel)]="ngModelArray[i - 1]" type="text" class="form-control" />
               </div>

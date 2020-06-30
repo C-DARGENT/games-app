@@ -1,6 +1,6 @@
 export interface DataFileModel {
   data: DataModel[];
-  dataType: string[];
+  type: string[];
   name: string;
 }
 

@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DataFileModel } from '@app/models/data-files.model';
 import { FileReaderService } from '@app/services/file-reader.service';
+import { FileWritterService } from '@app/services/file-writter.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FileWritterService } from '@app/services/file-writter.service';
 
 @Component({
   selector: 'app-games-list',
@@ -14,7 +14,7 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('inputFileUpload') public inputFileUpload: ElementRef;
   public currentDataIndex: number = 0;
   public filesData: DataFileModel;
-  public nbDataProp: Array<number>;
+  public nbProperty: Array<number>;
   public ngModelArray: Array<string>;
   private _changeEventListenerBind;
   private _copyData: Array<Object>;
@@ -27,8 +27,12 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
       if (!data) return;
       this.filesData = data;
       this._copyData = [...data.data];
-      this.nbDataProp = new Array(data.data[0].title.length);
-      this.ngModelArray = new Array(data.data[0].title.length - 1);
+      this.nbProperty = new Array(data.data[0].title.length);
+      /*
+        ngModelArray -> allows the user to add a new occurrence
+        ngModelArray size is length-1 because the first property is uneditable (equal to 'data-id')
+      */
+      this.ngModelArray = new Array(data.data[0].title.length - 1); // to associa
     });
   }
 
@@ -43,6 +47,20 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.currentDataIndex = dataToRender;
   }
 
+  // sort by Ascending order (a -> z; 0 -> 9)
+  public sortData(propIndex: number, dataIndex?: number): void {
+    const sheetDataIndex = dataIndex ? dataIndex : this.currentDataIndex;
+    this.filesData.data[sheetDataIndex].content.sort((a, b) => {
+      if (a[propIndex] > b[propIndex]) {
+        return 1;
+      }
+      if (b[propIndex] > a[propIndex]) {
+        return -1;
+      }
+      return 0;
+    });
+  }
+
   public pushNewFileData(): void {
     if (!this._validNgModelArray()) return;
     //Push new data on file model
@@ -52,7 +70,7 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   public updateDataFile(): void {
-    this._fileWritterService.export(this._concatFileData(), this.filesData.dataType);
+    this._fileWritterService.export(this._concatFileData(), this.filesData.type);
   }
 
   // Helper function
@@ -62,6 +80,8 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
     const concatData = [];
     for (let i = 0; i < this.filesData.data.length; i++) {
       console.log(this.filesData.data[i].title);
+      // resort data by property id
+      this.sortData(0, i);
       concatData.push([[...this.filesData.data[i].title], ...this.filesData.data[i].content]);
     }
     console.log('_concatFileData', concatData);
