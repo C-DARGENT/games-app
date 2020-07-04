@@ -22,9 +22,24 @@
 </div>
 
 <div *ngIf="filesData" class="card p-4 mt-5">
-  <section class="d-flex justify-content-end m-3">
+  <section class="d-flex justify-content-between m-3">
+    <form [formGroup]="fileFormGroup" class="form-inline">
+      <div class="form-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">File name:</span>
+        </div>
+        <input
+          type="text"
+          class="form-control"
+          formControlName="fileName"
+          aria-label="Default"
+          aria-describedby="inputGroup-sizing-default"
+        />
+      </div>
+    </form>
     <button
       type="button"
+      [disabled]="fileFormGroup.invalid"
       class="btn btn-primary"
       data-toggle="button"
       aria-pressed="false"
@@ -77,8 +92,8 @@
             <ng-container *ngIf="editViewIndex !== index">
               <td *ngFor="let prop of content">{{ prop }}</td>
               <td class="cta-icon">
-                <a class="icon-pencil" (click)="editData(index)" [class.disabled]="isEdition"></a>
-                <a class="icon-trash"></a>
+                <a class="icon-pencil" (click)="renderEditDataView(index)" [class.disabled]="isEdition"></a>
+                <a class="icon-trash" (click)="removeData(index)"></a>
               </td>
             </ng-container>
             <!-- Edition data view -->

@@ -4,6 +4,7 @@ import { FileReaderService } from '@app/services/file-reader.service';
 import { FileWritterService } from '@app/services/file-writter.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-games-list',
@@ -15,6 +16,7 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   public currentDataIndex: number = 0;
   public editViewIndex: number;
   public filesData: DataFileModel;
+  public fileFormGroup: FormGroup;
   public isEdition: boolean;
   public nbProperty: Array<number>;
   public ngModelArray: Array<string>;
@@ -23,12 +25,22 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   private _copyData: Array<Object>;
   private _destroy$ = new Subject<boolean>();
 
-  constructor(private _fileReaderService: FileReaderService, private _fileWritterService: FileWritterService) {}
+  constructor(
+    private _fileReaderService: FileReaderService,
+    private _fileWritterService: FileWritterService,
+    private _fb: FormBuilder
+  ) {
+    this.fileFormGroup = this._fb.group({ fileName: ['', Validators.required] });
+  }
 
   public ngOnInit(): void {
     this._fileReaderService.fileData$.pipe(takeUntil(this._destroy$)).subscribe((data) => {
       if (!data) return;
+      // New data so reset data index
+      this.currentDataIndex = 0;
+
       this.filesData = data;
+      this.fileFormGroup.controls['fileName'].setValue(data.name);
       this._copyData = [...data.data];
       this.nbProperty = new Array(data.data[0].title.length);
       /*
@@ -47,7 +59,7 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.inputFileUpload.nativeElement.addEventListener('change', this._changeEventListenerBind);
   }
 
-  public editData(dataIndex: number): void {
+  public renderEditDataView(dataIndex: number): void {
     this.editViewIndex = dataIndex;
     this.isEdition = true;
     this._setEditionData(dataIndex);
@@ -62,7 +74,6 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   public cancelEdition(): void {
     this.editViewIndex = null;
     this.isEdition = false;
-
     // Reinit edit array
     this.ngUpdateArray = new Array(this.filesData.data[this.currentDataIndex].title.length - 1);
   }
@@ -85,16 +96,30 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
+  // Add new data
   public pushNewFileData(): void {
     if (!this._validNgModelArray()) return;
-    //Push new data on file model
+    // Push new data on file model
     this._addNewData();
-    //Reset ngModel
+    // Reset ngModel
     this.ngModelArray = new Array(this.filesData.data[this.currentDataIndex].title.length - 1);
   }
 
+  public removeData(dataIndex: number): void {
+    this.filesData.data[this.currentDataIndex].content.splice(dataIndex, 1);
+    this.sortData(0);
+    // reset right data index
+    this.filesData.data[this.currentDataIndex].content.forEach((element, index) => {
+      element[0] = index + 1;
+    });
+  }
+
   public updateDataFile(): void {
-    this._fileWritterService.export(this._concatFileData(), this.filesData.type);
+    this._fileWritterService.export(
+      this._concatFileData(),
+      this.filesData.type,
+      this.fileFormGroup.controls['fileName'].value
+    );
   }
 
   // Helper function
@@ -103,12 +128,10 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   private _concatFileData(): Array<[]> {
     const concatData = [];
     for (let i = 0; i < this.filesData.data.length; i++) {
-      console.log(this.filesData.data[i].title);
       // resort data by property id
       this.sortData(0, i);
       concatData.push([[...this.filesData.data[i].title], ...this.filesData.data[i].content]);
     }
-    console.log('_concatFileData', concatData);
     return concatData;
   }
 
@@ -138,6 +161,7 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
         // save new prop values on data list variable
         this.filesData.data[this.currentDataIndex].content[dataIndex][i + 1] = this.ngUpdateArray[i];
       } else {
+        // set current prop data value on update array
         this.ngUpdateArray[i] = this.filesData.data[this.currentDataIndex].content[dataIndex][i + 1];
       }
       i++;

@@ -5,11 +5,9 @@ import * as XLSX from 'xlsx';
   providedIn: 'root'
 })
 export class FileWritterService {
-  constructor() {}
-
   //fs writter service
-  public export(data: Array<[]>, sheetNames: string[], fileName?: string): void {
-    const name = fileName ? fileName : 'video-games-list.xlsx';
+  public export(data: Array<[]>, sheetNames: string[], fileName: string): void {
+    const name = fileName ? fileName : 'app-list.xlsx';
     /** Generate workbook */
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
 
