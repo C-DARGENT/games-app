@@ -1,5 +1,4 @@
 import { DataListComponent } from './data-list/data-list.component';
-import { FooterComponent } from './footer/footer.component';
-import { HeaderComponent } from './header/header.component';
+import { TdEditLineComponent } from './td-edit-line/td-edit-line.component';
 
-export const components = [DataListComponent, FooterComponent, HeaderComponent];
+export const components = [DataListComponent, TdEditLineComponent];

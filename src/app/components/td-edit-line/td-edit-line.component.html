@@ -1,0 +1,19 @@
+<td *ngFor="let prop of ngForArray; let i = index; first as isFirst" [class.pl-0]="!isFirst">
+  <div *ngIf="!isFirst; else firstData">
+    <input [(ngModel)]="ngModelArray[i - 1]" type="text" class="form-control" />
+  </div>
+</td>
+<!-- CTA Container -->
+<td class="cta-icon">
+  <ng-container *ngIf="isEditionMode; else addNewLine">
+    <a class="icon-check" (click)="confirmEdition()"></a>
+    <a class="icon-cross" (click)="cancelEdition()"></a>
+  </ng-container>
+</td>
+
+<ng-template #addNewLine>
+  <button type="button" class="btn btn-primary btn-block" (click)="pushNewLineData()">Add new data</button>
+</ng-template>
+<ng-template #firstData>
+  <span class="numberCells">{{ dataIdProperty }}</span>
+</ng-template>

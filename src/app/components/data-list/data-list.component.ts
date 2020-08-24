@@ -1,10 +1,10 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { DataFileModel } from '@app/models/data-files.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DataFileModel, DataModel } from '@app/models/data-files.model';
 import { FileReaderService } from '@app/services/file-reader.service';
 import { FileWritterService } from '@app/services/file-writter.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-games-list',
@@ -19,9 +19,9 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   public fileFormGroup: FormGroup;
   public isEdition: boolean;
   public nbProperty: Array<number>;
-  public ngModelArray: Array<string>;
-  public ngUpdateArray: Array<any>;
-  private _changeEventListenerBind;
+  public ngModelArray: Array<string>; // add new line data information
+  public ngUpdateArray: Array<any>; // edit line data information
+  private _inputChangeEventListenerBind;
   private _copyData: Array<Object>;
   private _destroy$ = new Subject<boolean>();
 
@@ -53,37 +53,43 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    this._changeEventListenerBind = (evt: any) => {
+    this._inputChangeEventListenerBind = (evt: any) => {
       this._fileReaderService.getFileData(evt);
     };
-    this.inputFileUpload.nativeElement.addEventListener('change', this._changeEventListenerBind);
+    this.inputFileUpload.nativeElement.addEventListener('change', this._inputChangeEventListenerBind);
+  }
+
+  public get currentSheetData(): DataModel {
+    return this.filesData.data[this.currentDataIndex];
   }
 
   public renderEditDataView(dataIndex: number): void {
     this.editViewIndex = dataIndex;
     this.isEdition = true;
-    this._setEditionData(dataIndex);
   }
 
-  public confirmEdition(dataIndex: number): void {
-    this._setEditionData(dataIndex, true);
+  public editionFinished(): void {
     this.editViewIndex = null;
     this.isEdition = false;
-  }
-
-  public cancelEdition(): void {
-    this.editViewIndex = null;
-    this.isEdition = false;
-    // Reinit edit array
-    this.ngUpdateArray = new Array(this.filesData.data[this.currentDataIndex].title.length - 1);
   }
 
   public selectSheetData(dataToRender: number): void {
     this.currentDataIndex = dataToRender;
+    this.editViewIndex = null;
+    this.isEdition = false;
+  }
+
+  public theadSort(isFirstProp: boolean, index: number): void {
+    // prevent sort first line property (== data id) because we reset data id
+    if (isFirstProp) return;
+    this.sortData(index);
+    this._updateLineDataId();
   }
 
   // sort by Ascending order (a -> z; 0 -> 9)
   public sortData(propIndex: number, dataIndex?: number): void {
+    // not authorize sort when wwe are on edit Mode
+    if (this.editViewIndex) return;
     const sheetDataIndex = dataIndex ? dataIndex : this.currentDataIndex;
     this.filesData.data[sheetDataIndex].content.sort((a, b) => {
       if (a[propIndex] > b[propIndex]) {
@@ -94,15 +100,6 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
       }
       return 0;
     });
-  }
-
-  // Add new data
-  public pushNewFileData(): void {
-    if (!this._validNgModelArray()) return;
-    // Push new data on file model
-    this._addNewData();
-    // Reset ngModel
-    this.ngModelArray = new Array(this.filesData.data[this.currentDataIndex].title.length - 1);
   }
 
   public removeData(dataIndex: number): void {
@@ -124,6 +121,13 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   // Helper function
 
+  private _updateLineDataId(): void {
+    for (let index = 0; index < this.filesData.data[this.currentDataIndex].content.length; index++) {
+      // set first proprety (== id) of the index line data
+      this.filesData.data[this.currentDataIndex].content[index][0] = index + 1;
+    }
+  }
+
   // Remerge title array and content array
   private _concatFileData(): Array<[]> {
     const concatData = [];
@@ -135,41 +139,8 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
     return concatData;
   }
 
-  private _validNgModelArray(): boolean {
-    for (let index = 0; index < this.ngModelArray.length; index++) {
-      if (!this.ngModelArray[index]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private _addNewData(): void {
-    const dataArray: (string | number)[] = [];
-    // First data index equal to length number
-    for (let index = 0; index < this.ngModelArray.length; index++) {
-      dataArray.push(this.ngModelArray[index]);
-    }
-    dataArray.unshift(this.filesData.data[this.currentDataIndex].content.length + 1);
-    this.filesData.data[this.currentDataIndex].content.push(dataArray);
-  }
-
-  private _setEditionData(dataIndex: number, confirmEdition?: boolean): void {
-    let i = 0;
-    while (i < this.ngUpdateArray.length) {
-      if (confirmEdition) {
-        // save new prop values on data list variable
-        this.filesData.data[this.currentDataIndex].content[dataIndex][i + 1] = this.ngUpdateArray[i];
-      } else {
-        // set current prop data value on update array
-        this.ngUpdateArray[i] = this.filesData.data[this.currentDataIndex].content[dataIndex][i + 1];
-      }
-      i++;
-    }
-  }
-
   public ngOnDestroy(): void {
-    this.inputFileUpload.nativeElement.removeEventListener('change', this._changeEventListenerBind);
+    this.inputFileUpload.nativeElement.removeEventListener('change', this._inputChangeEventListenerBind);
     this._destroy$.next(true);
     this._destroy$.complete();
   }

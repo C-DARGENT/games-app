@@ -70,7 +70,7 @@
               *ngFor="let title of filesData.data[currentDataIndex].title; first as isFirst; let index = index"
               scope="col"
               [class.middle]="isFirst"
-              (click)="sortData(index)"
+              (click)="theadSort(isFirst, index)"
             >
               <span class="header">{{ title ? title : '#' }}</span>
               <!--  
@@ -84,46 +84,32 @@
         </thead>
         <tbody>
           <!-- Current data file -->
-          <tr
-            *ngFor="let content of filesData.data[currentDataIndex].content; let index = index"
-            [class.editCell]="editViewIndex === index"
-          >
+          <ng-container *ngFor="let content of filesData.data[currentDataIndex].content; let index = index">
             <!-- Data listing view -->
             <ng-container *ngIf="editViewIndex !== index">
-              <td *ngFor="let prop of content">{{ prop }}</td>
-              <td class="cta-icon">
-                <a class="icon-pencil" (click)="renderEditDataView(index)" [class.disabled]="isEdition"></a>
-                <a class="icon-trash" (click)="removeData(index)"></a>
-              </td>
+              <tr>
+                <td *ngFor="let prop of content">{{ prop }}</td>
+                <td class="cta-icon">
+                  <a class="icon-pencil" (click)="renderEditDataView(index)" [class.disabled]="isEdition"></a>
+                  <a class="icon-trash" (click)="removeData(index)"></a>
+                </td>
+              </tr>
             </ng-container>
-            <!-- Edition data view -->
+            <!-- Edition mode -->
             <ng-container *ngIf="editViewIndex === index">
-              <td *ngFor="let prop of content; let i = index; first as isFirst" [class.pl-0]="!isFirst">
-                <!--First data uneditable-->
-                <div *ngIf="isFirst">{{ prop }}</div>
-                <div *ngIf="!isFirst">
-                  <input [(ngModel)]="ngUpdateArray[i - 1]" type="text" class="form-control" />
-                </div>
-              </td>
-              <!-- CTA CELL -->
-              <td class="cta-icon">
-                <a class="icon-check" (click)="confirmEdition(index)"></a>
-                <a class="icon-cross" (click)="cancelEdition()"></a>
-              </td>
+              <tr
+                [class.editCell]="editViewIndex === index"
+                app-td-edit-line
+                [dataLineInformation]="currentSheetData"
+                [editIndexData]="index"
+                isEditionMode="true"
+                (editionFinished)="editionFinished()"
+              ></tr>
             </ng-container>
-          </tr>
+          </ng-container>
+
           <!-- Add new data occurence -->
-          <tr class="newData">
-            <td *ngFor="let prop of nbProperty; let i = index; first as isFirst" [class.pl-0]="!isFirst">
-              <div *ngIf="!isFirst; else firstData">
-                <input [(ngModel)]="ngModelArray[i - 1]" type="text" class="form-control" />
-              </div>
-            </td>
-            <!-- CTA Container -->
-            <td>
-              <button type="button" class="btn btn-primary btn-block" (click)="pushNewFileData()">Add new data</button>
-            </td>
-          </tr>
+          <tr class="newData" app-td-edit-line [dataLineInformation]="currentSheetData"></tr>
         </tbody>
       </table>
     </div>
