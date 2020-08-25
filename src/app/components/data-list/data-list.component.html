@@ -37,17 +37,25 @@
         />
       </div>
     </form>
-    <button
-      type="button"
-      [disabled]="fileFormGroup.invalid"
-      class="btn btn-primary"
-      data-toggle="button"
-      aria-pressed="false"
-      autocomplete="off"
-      (click)="updateDataFile()"
-    >
-      Update data file
-    </button>
+
+    <div class="dropdown">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        Dropdown button
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" data-toggle="modal" data-target="#addNewDataTypeModal">Add new tab data</a>
+        <a class="dropdown-item" [class.disabled]="fileFormGroup.invalid" (click)="updateDataFile()" href="#"
+          >Update data file</a
+        >
+      </div>
+    </div>
   </section>
   <section>
     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -73,12 +81,7 @@
               (click)="theadSort(isFirst, index)"
             >
               <span class="header">{{ title ? title : '#' }}</span>
-              <!--  
-              <span *ngIf="!isFirst" class="d-inline-flex flex-column icon" (click)="sortData(index)">
-                <a class="icon-caret-up-fill"></a>
-                <a class="icon-caret-down-fill"></a>
-              </span>
-            --></th>
+            </th>
             <th><!-- CTA THEAD--></th>
           </tr>
         </thead>
@@ -120,3 +123,44 @@
 <ng-template #firstData>
   <span class="numberCells">{{ filesData.data[currentDataIndex].content.length + 1 }}</span>
 </ng-template>
+
+<ng-container>
+  <div class="modal fade" id="addNewDataTypeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">New data type</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label">Data type name:</label>
+              <input
+                type="text"
+                [(ngModel)]="ngModelDataType"
+                [ngModelOptions]="{ standalone: true }"
+                class="form-control"
+                id="data-type-name"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            [disabled]="!ngModelDataType"
+            data-dismiss="modal"
+            (click)="createDataType()"
+          >
+            Create
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

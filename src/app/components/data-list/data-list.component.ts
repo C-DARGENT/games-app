@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataFileModel, DataModel } from '@app/models/data-files.model';
 import { FileReaderService } from '@app/services/file-reader.service';
 import { FileWritterService } from '@app/services/file-writter.service';
+import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -14,6 +15,7 @@ import { takeUntil } from 'rxjs/operators';
 export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('inputFileUpload') public inputFileUpload: ElementRef;
   public currentDataIndex: number = 0;
+  public ngModelDataType: string;
   public editViewIndex: number;
   public filesData: DataFileModel;
   public fileFormGroup: FormGroup;
@@ -61,6 +63,14 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   public get currentSheetData(): DataModel {
     return this.filesData.data[this.currentDataIndex];
+  }
+
+  public createDataType(): void {
+    ($('#addNewDataTypeModal') as any).modal('hide');
+    const title = _.cloneDeep(this.filesData.data[0].title);
+    this.filesData.type.push(this.ngModelDataType);
+    this.filesData.data.push({ title, content: new Array() });
+    this.ngModelDataType = null;
   }
 
   public renderEditDataView(dataIndex: number): void {

@@ -4,6 +4,23 @@
     {
       "icon": {
         "paths": [
+          "M563.2 307.2h-102.4v153.6h-153.6v102.4h153.6v153.6h102.4v-153.6h153.6v-102.4h-153.6v-153.6zM512 0c-281.6 0-512 230.4-512 512s230.4 512 512 512 512-230.4 512-512-230.4-512-512-512zM512 921.6c-225.28 0-409.6-184.32-409.6-409.6s184.32-409.6 409.6-409.6 409.6 184.32 409.6 409.6-184.32 409.6-409.6 409.6z"
+        ],
+        "attrs": [{}],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 0,
+        "tags": ["round-add-button"]
+      },
+      "attrs": [{}],
+      "properties": { "order": 8, "id": 6, "name": "round-add", "prevSize": 32, "code": 59654 },
+      "setIdx": 0,
+      "setId": 2,
+      "iconIdx": 0
+    },
+    {
+      "icon": {
+        "paths": [
           "M702.080 318.080c8.671-8.598 20.611-13.91 33.792-13.91 26.51 0 48 21.49 48 48 0 12.847-5.047 24.515-13.266 33.129l0.018-0.019-255.488 319.36c-8.791 9.449-21.296 15.341-35.177 15.341-13.256 0-25.257-5.373-33.943-14.061l-169.28-169.344c-9.411-8.787-15.277-21.267-15.277-35.117 0-26.51 21.49-48 48-48 13.85 0 26.33 5.866 35.092 15.249l0.026 0.028 134.016 133.952 222.272-283.2c0.412-0.513 0.831-0.972 1.276-1.404l0.004-0.004z"
         ],
         "attrs": [{}],
@@ -16,7 +33,7 @@
       "properties": { "order": 7, "id": 5, "name": "check", "prevSize": 32, "code": 59652 },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 0
+      "iconIdx": 1
     },
     {
       "icon": {
@@ -34,7 +51,7 @@
       "properties": { "order": 6, "id": 4, "name": "cross", "prevSize": 32, "code": 59653 },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 1
+      "iconIdx": 2
     },
     {
       "icon": {
@@ -52,7 +69,7 @@
       "properties": { "order": 5, "id": 3, "name": "pencil", "prevSize": 32, "code": 59650 },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 2
+      "iconIdx": 3
     },
     {
       "icon": {
@@ -70,7 +87,7 @@
       "properties": { "order": 4, "id": 2, "name": "trash", "prevSize": 32, "code": 59651 },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 3
+      "iconIdx": 4
     },
     {
       "icon": {
@@ -87,7 +104,7 @@
       "properties": { "order": 2, "id": 1, "name": "caret-down-fill", "prevSize": 32, "code": 59648 },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 4
+      "iconIdx": 5
     },
     {
       "icon": {
@@ -104,7 +121,7 @@
       "properties": { "order": 3, "id": 0, "name": "caret-up-fill", "prevSize": 32, "code": 59649 },
       "setIdx": 0,
       "setId": 2,
-      "iconIdx": 5
+      "iconIdx": 6
     }
   ],
   "height": 1024,
