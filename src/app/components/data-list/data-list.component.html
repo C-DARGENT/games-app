@@ -80,7 +80,13 @@
               [class.middle]="isFirst"
               (click)="theadSort(isFirst, index)"
             >
-              <span class="header">{{ title ? title : '#' }}</span>
+              <section class="d-flex justify-content-between align-items-center">
+                <span class="header">{{ title ? title : '#' }}</span>
+                <div *ngIf="!isFirst">
+                  <div class="icon-caret-up-fill" [class.active]="isSortIconActive(index, true)"></div>
+                  <div class="icon-caret-down-fill" [class.active]="isSortIconActive(index, false)"></div>
+                </div>
+              </section>
             </th>
             <th><!-- CTA THEAD--></th>
           </tr>

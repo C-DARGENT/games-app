@@ -19,10 +19,12 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   public editViewIndex: number;
   public filesData: DataFileModel;
   public fileFormGroup: FormGroup;
+  public isAscendingSort: boolean = true;
   public isEdition: boolean;
   public nbProperty: Array<number>;
   public ngModelArray: Array<string>; // add new line data information
   public ngUpdateArray: Array<any>; // edit line data information
+  public sortIndex: number;
   private _inputChangeEventListenerBind;
   private _copyData: Array<Object>;
   private _destroy$ = new Subject<boolean>();
@@ -73,6 +75,10 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.ngModelDataType = null;
   }
 
+  public isSortIconActive(sortTitle: number, ascendingOrder: boolean): boolean {
+    return this.sortIndex === sortTitle && this.isAscendingSort === ascendingOrder;
+  }
+
   public renderEditDataView(dataIndex: number): void {
     this.editViewIndex = dataIndex;
     this.isEdition = true;
@@ -90,23 +96,35 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   public theadSort(isFirstProp: boolean, index: number): void {
-    // prevent sort first line property (== data id) because we reset data id
     if (isFirstProp) return;
-    this.sortData(index);
+    // prevent sort first line property (== data id) because we reset data id
+    if (!this.sortIndex && this.sortIndex !== 0) {
+      this.sortIndex = 0;
+    } else {
+      // SortIndex exist
+      if (this.sortIndex === index) {
+        // same index so inverse isAscending order
+        this.isAscendingSort = !this.isAscendingSort;
+      } else {
+        this.sortIndex = index;
+        this.isAscendingSort = true;
+      }
+    }
+    this.sortData(index, this.isAscendingSort);
     this._updateLineDataId();
   }
 
   // sort by Ascending order (a -> z; 0 -> 9)
-  public sortData(propIndex: number, dataIndex?: number): void {
+  public sortData(propIndex: number, ascendingSortOrder: boolean, dataIndex?: number): void {
     // not authorize sort when wwe are on edit Mode
     if (this.editViewIndex) return;
     const sheetDataIndex = dataIndex ? dataIndex : this.currentDataIndex;
     this.filesData.data[sheetDataIndex].content.sort((a, b) => {
       if (a[propIndex] > b[propIndex]) {
-        return 1;
+        return ascendingSortOrder ? 1 : -1;
       }
       if (b[propIndex] > a[propIndex]) {
-        return -1;
+        return ascendingSortOrder ? -1 : 1;
       }
       return 0;
     });
@@ -114,7 +132,7 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   public removeData(dataIndex: number): void {
     this.filesData.data[this.currentDataIndex].content.splice(dataIndex, 1);
-    this.sortData(0);
+    this.sortData(0, true);
     // reset right data index
     this.filesData.data[this.currentDataIndex].content.forEach((element, index) => {
       element[0] = index + 1;
@@ -143,7 +161,7 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
     const concatData = [];
     for (let i = 0; i < this.filesData.data.length; i++) {
       // resort data by property id
-      this.sortData(0, i);
+      this.sortData(0, true, i);
       concatData.push([[...this.filesData.data[i].title], ...this.filesData.data[i].content]);
     }
     return concatData;
