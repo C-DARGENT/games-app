@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataFileModel, DataModel } from '@app/models/data-files.model';
 import { FileReaderService } from '@app/services/file-reader.service';
@@ -8,11 +17,12 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-games-list',
+  selector: 'app-data-list',
   styleUrls: ['./data-list.component.less'],
   templateUrl: './data-list.component.html'
 })
 export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
+  @Output() public fileDataContent = new EventEmitter<Array<Array<any>>>();
   @ViewChild('inputFileUpload') public inputFileUpload: ElementRef;
   public currentDataIndex: number = 0;
   public ngModelDataType: string;
@@ -42,7 +52,7 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
       if (!data) return;
       // New data so reset data index
       this.currentDataIndex = 0;
-
+      this.fileDataContent.emit(data.data[this.currentDataIndex].content);
       this.filesData = data;
       this.fileFormGroup.controls['fileName'].setValue(data.name);
       this._copyData = [...data.data];
@@ -91,6 +101,7 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   public selectSheetData(dataToRender: number): void {
     this.currentDataIndex = dataToRender;
+    this.fileDataContent.emit(this.filesData.data[this.currentDataIndex].content);
     this.editViewIndex = null;
     this.isEdition = false;
   }

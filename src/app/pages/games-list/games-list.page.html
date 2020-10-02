@@ -1,0 +1,10 @@
+<ng-container>
+  <section class="data-list">
+    <app-data-list (fileDataContent)="getFilesData($event)"></app-data-list>
+  </section>
+  <section [style.visibility]="videoGamesRepartition? 'visible': 'hidden'" class="card">
+    <div>
+      <canvas #chartjs id="myChart" width="700" height="400"></canvas>
+    </div>
+  </section>
+</ng-container>

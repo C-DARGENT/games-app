@@ -22,7 +22,7 @@
 </div>
 
 <div *ngIf="filesData" class="card p-4 mt-5">
-  <section class="d-flex justify-content-between m-3">
+  <section id="form-header" class="d-flex justify-content-between m-3">
     <form [formGroup]="fileFormGroup" class="form-inline">
       <div class="form-group mb-3">
         <div class="input-group-prepend">
@@ -57,7 +57,7 @@
       </div>
     </div>
   </section>
-  <section>
+  <section class="table-data">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
       <li
         *ngFor="let type of filesData.type; let index = index"
@@ -125,11 +125,7 @@
   </section>
 </div>
 
-<ng-template #noData> Files select containt no data </ng-template>
-<ng-template #firstData>
-  <span class="numberCells">{{ filesData.data[currentDataIndex].content.length + 1 }}</span>
-</ng-template>
-
+<!-- MODAL ADD NEW COLUMN DATA -->
 <ng-container>
   <div class="modal fade" id="addNewDataTypeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -170,3 +166,8 @@
     </div>
   </div>
 </ng-container>
+
+<ng-template #noData> Files select containt no data </ng-template>
+<ng-template #firstData>
+  <span class="numberCells">{{ filesData.data[currentDataIndex].content.length + 1 }}</span>
+</ng-template>
