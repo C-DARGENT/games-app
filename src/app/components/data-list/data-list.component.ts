@@ -1,12 +1,11 @@
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import {
-  AfterViewInit,
   Component,
-  ElementRef,
   EventEmitter,
+  Input,
   OnDestroy,
   OnInit,
-  Output,
-  ViewChild
+  Output
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataFileModel, DataModel } from '@app/models/data-files.model';
@@ -17,13 +16,31 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
+  animations: [       // metadata array
+    trigger('toggleClick', [     // trigger block
+    transition('true => false', animate('1000ms linear')),  // animation timing
+    transition('false => true', animate('1000ms linear')),
+    state('true', style({      // final CSS following animation
+      opacity: 1
+    })),
+    state('false', style({
+      background: '#80808040',
+      height: '70px',
+      opacity: 0.25,
+      overflow: 'hidden',
+      padding: '0px'
+    }))
+  ])
+] ,
   selector: 'app-data-list',
   styleUrls: ['./data-list.component.less'],
   templateUrl: './data-list.component.html'
 })
-export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
+export class DataListComponent implements OnInit, OnDestroy {
+  @Input() public fullScreen: boolean = true;
   @Output() public fileDataContent = new EventEmitter<Array<Array<any>>>();
-  @ViewChild('inputFileUpload') public inputFileUpload: ElementRef;
+  @Output() public fullScreenEvent = new EventEmitter<boolean>();
+
   public currentDataIndex: number = 0;
   public ngModelDataType: string;
   public editViewIndex: number;
@@ -35,7 +52,6 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   public ngModelArray: Array<string>; // add new line data information
   public ngUpdateArray: Array<any>; // edit line data information
   public sortIndex: number;
-  private _inputChangeEventListenerBind;
   private _copyData: Array<Object>;
   private _destroy$ = new Subject<boolean>();
 
@@ -66,15 +82,13 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  public ngAfterViewInit(): void {
-    this._inputChangeEventListenerBind = (evt: any) => {
-      this._fileReaderService.getFileData(evt);
-    };
-    this.inputFileUpload.nativeElement.addEventListener('change', this._inputChangeEventListenerBind);
-  }
-
   public get currentSheetData(): DataModel {
     return this.filesData.data[this.currentDataIndex];
+  }
+
+  public toogleFullScreen(): void {
+    this.fullScreen = !this.fullScreen;
+    this.fullScreenEvent.emit(this.fullScreen);
   }
 
   public createDataType(): void {
@@ -179,7 +193,6 @@ export class DataListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.inputFileUpload.nativeElement.removeEventListener('change', this._inputChangeEventListenerBind);
     this._destroy$.next(true);
     this._destroy$.complete();
   }

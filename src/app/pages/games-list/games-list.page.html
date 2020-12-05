@@ -1,10 +1,11 @@
-<ng-container>
-  <section class="data-list">
-    <app-data-list (fileDataContent)="getFilesData($event)"></app-data-list>
-  </section>
-  <section [style.visibility]="videoGamesRepartition? 'visible': 'hidden'" class="card">
-    <div>
-      <canvas #chartjs id="myChart" width="700" height="400"></canvas>
-    </div>
-  </section>
+<ng-container>  
+  <app-import-data-list></app-import-data-list>
+  <div class="main-container">
+    <section [ngClass]="{'full-screen-component': secondCardFullScreen}" class="mt-5">
+      <app-video-games-pie-chart [filesData]="data" [fullScreen]="secondCardFullScreen" (fullScreenEvent)="onSecondCardChange($event)" ></app-video-games-pie-chart>
+    </section>
+    <section class="data-list mt-5" [ngClass]="{'full-screen-component': firstCardFullScreen}">
+      <app-data-list [fullScreen]="firstCardFullScreen" (fullScreenEvent)="onFirstCardChange($event)" (fileDataContent)="getFilesData($event)"></app-data-list>
+    </section>   
+  </div> 
 </ng-container>

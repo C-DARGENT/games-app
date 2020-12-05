@@ -10,6 +10,26 @@
   color: #0000002e;
 }
 
+.files-data {
+  padding: 1.5rem;
+}
+
+#myTabContent {
+  &.table-data {
+    overflow: scroll;
+    height: 520px;
+    overflow-x: hidden;
+  }
+}
+
+.toggle-container {
+  display: flex;
+  justify-content: space-between;
+  h2 {
+    margin: 0;
+  }
+}
+
 th {
   cursor: pointer;
   &.middle {
@@ -25,11 +45,13 @@ th {
 
 tbody {
   tr {
-    &.editCell,
-    &.newData {
+    &.edit-cell,
+    &.new-data-occurence {
       td {
         vertical-align: middle;
       }
+    }
+    &.new-data-occurence {
     }
   }
   td {

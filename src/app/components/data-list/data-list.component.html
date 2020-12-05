@@ -1,28 +1,11 @@
-<div class="card">
-  <div class="card-body">
-    <h5 class="card-title">Import your data file.xlsx</h5>
-
-    <div class="input-group mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
-      </div>
-      <div class="custom-file">
-        <input
-          type="file"
-          id="fileUpload"
-          #inputFileUpload
-          name="games-list"
-          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-        />
-        <label class="custom-file-label" for="fileUpload">Choose file</label>
-      </div>
+<div *ngIf="filesData" class="files-data card" [@toggleClick]="fullScreen">
+  <div class="toggle-container m-3">
+    <h2> Data list</h2>
+    <div class="toggle-button" (click)="toogleFullScreen()">
+      <img [src]="fullScreen ? '/assets/icons/fullscreen.svg': '/assets/icons/fullscreen-exit.svg'"/>
     </div>
-    <p *ngIf="filesData">Data from this file : {{ filesData.name }}</p>
   </div>
-</div>
-
-<div *ngIf="filesData" class="card p-4 mt-5">
-  <section id="form-header" class="d-flex justify-content-between m-3">
+  <section id="form-header" class="d-flex justify-content-between m-3" *ngIf="fullScreen">
     <form [formGroup]="fileFormGroup" class="form-inline">
       <div class="form-group mb-3">
         <div class="input-group-prepend">
@@ -70,7 +53,7 @@
         }}</a>
       </li>
     </ul>
-    <div class="tab-content" id="myTabContent" *ngIf="filesData.data; else noData">
+    <div class="tab-content" id="myTabContent" *ngIf="filesData.data; else noData" [class.table-data]="filesData.data">
       <table class="table table-striped">
         <thead class="thead-light">
           <tr>
@@ -92,33 +75,32 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Current data file -->
-          <ng-container *ngFor="let content of filesData.data[currentDataIndex].content; let index = index">
-            <!-- Data listing view -->
-            <ng-container *ngIf="editViewIndex !== index">
-              <tr>
-                <td *ngFor="let prop of content">{{ prop }}</td>
-                <td class="cta-icon">
-                  <a class="icon-pencil" (click)="renderEditDataView(index)" [class.disabled]="isEdition"></a>
-                  <a class="icon-trash" (click)="removeData(index)"></a>
-                </td>
-              </tr>
+            <!-- Add new data occurence -->
+            <tr class="new-data-occurence" app-td-edit-line [dataLineInformation]="currentSheetData"></tr>
+            <!-- Current data file -->
+            <ng-container *ngFor="let content of filesData.data[currentDataIndex].content; let index = index" >
+              <!-- Data listing view -->
+              <ng-container *ngIf="editViewIndex !== index">
+                <tr>
+                  <td *ngFor="let prop of content">{{ prop }}</td>
+                  <td class="cta-icon">
+                    <a class="icon-pencil" (click)="renderEditDataView(index)" [class.disabled]="isEdition"></a>
+                    <a class="icon-trash" (click)="removeData(index)"></a>
+                  </td>
+                </tr>
+              </ng-container>
+              <!-- Edition mode -->
+              <ng-container *ngIf="editViewIndex === index">
+                <tr
+                  [class.edit-cell]="editViewIndex === index"
+                  app-td-edit-line
+                  [dataLineInformation]="currentSheetData"
+                  [editIndexData]="index"
+                  isEditionMode="true"
+                  (editionFinished)="editionFinished()"
+                ></tr>
+              </ng-container>
             </ng-container>
-            <!-- Edition mode -->
-            <ng-container *ngIf="editViewIndex === index">
-              <tr
-                [class.editCell]="editViewIndex === index"
-                app-td-edit-line
-                [dataLineInformation]="currentSheetData"
-                [editIndexData]="index"
-                isEditionMode="true"
-                (editionFinished)="editionFinished()"
-              ></tr>
-            </ng-container>
-          </ng-container>
-
-          <!-- Add new data occurence -->
-          <tr class="newData" app-td-edit-line [dataLineInformation]="currentSheetData"></tr>
         </tbody>
       </table>
     </div>

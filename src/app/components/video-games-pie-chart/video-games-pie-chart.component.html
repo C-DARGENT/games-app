@@ -1,0 +1,15 @@
+<section  [style.visibility]="videoGamesRepartition? 'visible': 'hidden'" class="card"     
+[@toggleClick]="fullScreen">
+    <div class="toggle-container m-3">
+      <h2> Video Games Pie chart repartition </h2>
+      <div class="toggle-button" (click)="toogleFullScreen()">
+        <img [src]="fullScreen ? '/assets/icons/fullscreen.svg': '/assets/icons/fullscreen-exit.svg'"/>
+      </div>
+    </div>
+    <div class="canvas-container p-4" [style.visibility]="fullScreen? 'visible': 'hidden'">
+      <canvas #chartjs id="myChart" width="700" height="400"></canvas>
+    </div>
+    <div class="cta-container">
+      <button type="button" class="btn btn-primary btn-block" (click)="nextVideoGames()">Next video games to play ?</button>
+    </div>
+  </section>

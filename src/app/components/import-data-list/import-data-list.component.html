@@ -1,0 +1,22 @@
+<div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Import your data file.xlsx</h5>
+  
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+        </div>
+        <div class="custom-file">
+          <input
+            type="file"
+            id="fileUpload"
+            #inputFileUpload
+            name="games-list"
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          />
+          <label class="custom-file-label" for="fileUpload">Choose file</label>
+        </div>
+      </div>
+      <p *ngIf="filesData">Data from this file : {{ filesData.name }}</p>
+    </div>
+  </div>
